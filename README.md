@@ -6,11 +6,11 @@ This is written in markdown. Read about markdown here: [markdowncheatsheet](http
 - Joushua Dela Cruz
 - Jack Berena
 
-## Your student number:
+## Your student numbers:
 - A01308022
 - A01265947
 
-## Your GitHub account ID:
+## Your GitHub account IDs:
 - JoushuaDelaCruz
 - jackberena
 
