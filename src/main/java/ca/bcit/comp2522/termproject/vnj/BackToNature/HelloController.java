@@ -1,4 +1,4 @@
-package ca.bcit.comp2522.termproject.vnj;
+package ca.bcit.comp2522.termproject.vnj.BackToNature;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
