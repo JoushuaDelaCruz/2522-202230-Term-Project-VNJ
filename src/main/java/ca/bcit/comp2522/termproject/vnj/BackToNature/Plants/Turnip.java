@@ -1,9 +1,5 @@
 package ca.bcit.comp2522.termproject.vnj.BackToNature.Plants;
 
-import ca.bcit.comp2522.termproject.vnj.BackToNature.Plants.Crop;
-import ca.bcit.comp2522.termproject.vnj.BackToNature.Plants.Harvestable;
-import ca.bcit.comp2522.termproject.vnj.BackToNature.Plants.Plant;
-
 /**
  * Turnip class.
  *
