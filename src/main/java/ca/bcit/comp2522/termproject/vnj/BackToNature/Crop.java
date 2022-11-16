@@ -8,9 +8,14 @@ package ca.bcit.comp2522.termproject.vnj.BackToNature;
  */
 public interface Crop {
     /**
-     * Grows the crop.
+     * Grows the seed to budding stage.
      */
-    void grow();
+    void budding();
+
+    /**
+     * Grows the seed to ripening stage.
+     */
+    void ripening();
 
     /**
      * Checks if crops is ripe enough to harvest.
