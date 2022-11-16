@@ -28,11 +28,14 @@ public final class Mayor extends Character implements NonPlayableCharacter {
 
     /**
      * Creates a single instance of Mayor Class.
+     *
+     * @return a mayor instance
      */
-    public static void getInstance() {
+    public static Mayor getInstance() {
         if (singleInstance == null) {
             singleInstance = new Mayor(new Point(0, 0));
         }
+        return singleInstance;
     }
 
     @Override

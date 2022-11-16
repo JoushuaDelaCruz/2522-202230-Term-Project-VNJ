@@ -42,11 +42,13 @@ public final class MainCharacter extends Character {
      *
      * @param name the name of the character
      * @param location starting location
+     * @return a MainCharacter instance
      */
-    public void getInstance(final String name, final Point location) {
+    public MainCharacter getInstance(final String name, final Point location) {
         if (singleInstance == null) {
             singleInstance = new MainCharacter(name, location);
         }
+        return singleInstance;
     }
 
     /**
