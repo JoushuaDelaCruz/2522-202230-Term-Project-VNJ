@@ -1,4 +1,4 @@
-package ca.bcit.comp2522.termproject.vnj.BackToNature;
+package ca.bcit.comp2522.termproject.vnj.BackToNature.Character;
 
 import java.io.File;
 
