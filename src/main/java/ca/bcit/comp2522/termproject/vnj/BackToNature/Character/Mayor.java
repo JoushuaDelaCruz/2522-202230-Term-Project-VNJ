@@ -1,7 +1,6 @@
 package ca.bcit.comp2522.termproject.vnj.BackToNature.Character;
 
-import ca.bcit.comp2522.termproject.vnj.BackToNature.Point;
-
+import java.awt.Point;
 import java.io.File;
 
 /**

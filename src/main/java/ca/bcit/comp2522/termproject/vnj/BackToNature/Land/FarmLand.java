@@ -1,9 +1,10 @@
 package ca.bcit.comp2522.termproject.vnj.BackToNature.Land;
 
 import ca.bcit.comp2522.termproject.vnj.BackToNature.Plants.Plant;
-import ca.bcit.comp2522.termproject.vnj.BackToNature.Point;
 
+import java.awt.Point;
 import java.util.*;
+import java.util.List;
 
 /**
  * Farm Land.

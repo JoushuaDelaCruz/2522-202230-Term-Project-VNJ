@@ -1,7 +1,6 @@
 package ca.bcit.comp2522.termproject.vnj.BackToNature.Character;
 
-import ca.bcit.comp2522.termproject.vnj.BackToNature.Point;
-
+import java.awt.Point;
 import java.util.Objects;
 
 /**
@@ -65,15 +64,16 @@ public abstract class Character {
      * Moves the character to new position.
      */
     public void move() {
-        int currentX = this.location.getX();
-        int currentY = this.location.getY();
+        int currentX = (int) this.location.getX();
+        int currentY = (int) this.location.getY();
+
         switch (this.direction) {
             case East -> currentX += 1;
             case West -> currentX -= 1;
             case South -> currentY -= 1;
             default -> currentY += 1;
         }
-        this.location = new Point(currentX, currentY);
+        location.move(currentX, currentY);
     }
 
     /**

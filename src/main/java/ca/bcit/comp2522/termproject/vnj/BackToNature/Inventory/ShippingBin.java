@@ -1,8 +1,8 @@
 package ca.bcit.comp2522.termproject.vnj.BackToNature.Inventory;
 
 import ca.bcit.comp2522.termproject.vnj.BackToNature.Plants.Crop;
-import ca.bcit.comp2522.termproject.vnj.BackToNature.Point;
 
+import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Objects;
 
