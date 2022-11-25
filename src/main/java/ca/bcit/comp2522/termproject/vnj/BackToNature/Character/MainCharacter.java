@@ -8,7 +8,7 @@ import ca.bcit.comp2522.termproject.vnj.BackToNature.Point;
  * @author Joushua Dela Cruz
  * @version 2022
  */
-public final class MainCharacter extends Character {
+public final class MainCharacter extends Character  {
     /**
      * Default max stamina.
      */
@@ -31,7 +31,7 @@ public final class MainCharacter extends Character {
      * @param location starting location of the character.
      * @throws IllegalArgumentException when name is invalid
      */
-    private MainCharacter(final String name, final Point location) {
+    public MainCharacter(final String name, final Point location) {
         super(name, location);
         this.stamina = DEFAULT_MAX_STAMINA;
         this.money = STARTING_MONEY;
