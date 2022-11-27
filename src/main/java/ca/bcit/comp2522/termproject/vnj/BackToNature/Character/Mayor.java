@@ -22,7 +22,7 @@ public final class Mayor extends Character implements NonPlayableCharacter {
      * @throws IllegalArgumentException when name is invalid
      */
     private Mayor(final Point location) {
-        super(DEFAULT_MAYOR_NAME, location);
+        super(DEFAULT_MAYOR_NAME, location, "");
     }
 
     /**

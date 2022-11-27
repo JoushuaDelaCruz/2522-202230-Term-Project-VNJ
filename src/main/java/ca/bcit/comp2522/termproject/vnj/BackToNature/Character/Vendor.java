@@ -18,7 +18,7 @@ public class Vendor extends Character implements NonPlayableCharacter {
      * @throws IllegalArgumentException when name is invalid
      */
     public Vendor(final String name, final Point location) {
-        super(name, location);
+        super(name, location, "");
     }
 
     @Override

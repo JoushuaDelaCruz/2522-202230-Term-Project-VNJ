@@ -21,7 +21,7 @@ public final class MainCharacter extends Character {
      * Default stamina faint state.
      */
     public static final int FAINT_STATE = 0;
-    private static MainCharacter singleInstance = null;
+    private static MainCharacter singleInstance;
     private int stamina;
     private double money;
     /**
@@ -29,10 +29,11 @@ public final class MainCharacter extends Character {
      *
      * @param name the name of the character
      * @param location starting location of the character.
+     * @param url the url location of the image
      * @throws IllegalArgumentException when name is invalid
      */
-    private MainCharacter(final String name, final Point location) {
-        super(name, location);
+    public MainCharacter(final String name, final Point location, final String url) {
+        super(name, location, url);
         this.stamina = DEFAULT_MAX_STAMINA;
         this.money = STARTING_MONEY;
     }
@@ -41,12 +42,13 @@ public final class MainCharacter extends Character {
      * Creates only one single instance of a player.
      *
      * @param name the name of the character
-     * @param location starting location
+     * @param location starting location of the character.
+     * @param url the url location of the image
      * @return a MainCharacter instance
      */
-    public MainCharacter getInstance(final String name, final Point location) {
+    public MainCharacter getInstance(final String name, final Point location, final String url) {
         if (singleInstance == null) {
-            singleInstance = new MainCharacter(name, location);
+            singleInstance = new MainCharacter(name, location, url);
         }
         return singleInstance;
     }

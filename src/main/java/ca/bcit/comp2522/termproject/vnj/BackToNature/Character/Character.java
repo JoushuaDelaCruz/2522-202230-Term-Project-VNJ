@@ -1,5 +1,8 @@
 package ca.bcit.comp2522.termproject.vnj.BackToNature.Character;
 
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+
 import java.awt.Point;
 import java.util.Objects;
 
@@ -17,6 +20,26 @@ public abstract class Character {
         North, South, East, West
     }
     /**
+     * Default number of units the character moves.
+     */
+    public static final int MOVEMENT_IN_UNITS = 10;
+    /**
+     * Default number that is associated with North.
+     */
+    public static final int NORTH = 1;
+    /**
+     * Default number that is associated with SOUTH.
+     */
+    public static final int SOUTH = 2;
+    /**
+     * Default number that is associated with EAST.
+     */
+    public static final int EAST = 3;
+    /**
+     * Default number that is associated with WEST.
+     */
+    public static final int WEST = 4;
+    /**
      * The name of the character.
      */
     protected String name;
@@ -28,17 +51,29 @@ public abstract class Character {
      * The direction the character is facing.
      */
     protected Direction direction;
-
+    /**
+     * The holds the images of the character.
+     */
+    protected final ImageView image;
+    private boolean spriteMovement;
     /**
      * A Character constructor.
      *
      * @param name the name of the character
      * @param location starting location of the character.
-     * @throws IllegalArgumentException when name is invalid
+     * @param url the url location of the image
+     * @throws IllegalArgumentException when name or url is invalid
      */
-    public Character(final String name, final Point location) {
+    public Character(final String name, final Point location, final String url) {
         if (name != null && name.trim().length() != 0) {
             this.name = name;
+        } else {
+            throw new IllegalArgumentException("A character must have a name!");
+        }
+        if (url != null && url.trim().length() != 0) {
+            this.image = new ImageView(new Image(url, true));
+            image.setX(location.x);
+            image.setY(location.y);
         } else {
             throw new IllegalArgumentException("A character must have a name!");
         }
@@ -47,33 +82,78 @@ public abstract class Character {
     }
 
     /**
-     * Changes the direction the user is facing.
+     * Moves the character to new position.
      *
-     * @param newDirection a new direction the character is facing.
+     * @param move the default number that is associated with direction.
      */
-    public void changeDirection(final String newDirection) {
-        switch (newDirection) {
-            case "E" -> this.direction = Direction.East;
-            case "W" -> this.direction = Direction.West;
-            case "S" -> this.direction = Direction.South;
-            default -> this.direction = Direction.North;
+    public void move(final int move) {
+        spriteMovement = !spriteMovement;
+        switch (move) {
+            case NORTH -> {
+                draw(NORTH);
+                image.setY(image.getY() - MOVEMENT_IN_UNITS);
+                direction = Direction.North;
+            }
+            case SOUTH -> {
+                draw(SOUTH);
+                image.setY(image.getY() + MOVEMENT_IN_UNITS);
+                direction = Direction.South;
+            }
+            case EAST -> {
+                draw(EAST);
+                image.setX(image.getX() + MOVEMENT_IN_UNITS);
+                direction = Direction.East;
+            }
+            case WEST -> {
+                draw(WEST);
+                image.setX(image.getX() - MOVEMENT_IN_UNITS);
+                direction = Direction.West;
+            }
+            default -> { }
+        }
+    }
+
+    private void draw(final int directionImage) {
+        switch (directionImage) {
+            case NORTH -> {
+                if (spriteMovement) {
+                    image.setImage(new Image("FacingBackwards1.png"));
+                } else {
+                    image.setImage(new Image("FacingBackwards2.png"));
+                }
+            }
+            case SOUTH -> {
+                if (spriteMovement) {
+                    image.setImage(new Image("FacingForward1.png"));
+                } else {
+                    image.setImage(new Image("FacingForward2.png"));
+                }
+            }
+            case EAST -> {
+                if (spriteMovement) {
+                    image.setImage(new Image("FacingRightSprite1.png"));
+                } else {
+                    image.setImage(new Image("FacingRightSprite2.png"));
+                }
+            }
+            case WEST -> {
+                if (spriteMovement) {
+                    image.setImage(new Image("FacingLeft1.png"));
+                } else {
+                    image.setImage(new Image("FacingLeft2.png"));
+                }
+            }
+            default -> { }
         }
     }
 
     /**
-     * Moves the character to new position.
+     * Returns the image view of the character.
+     *
+     * @return image as an imageView node
      */
-    public void move() {
-        int currentX = (int) this.location.getX();
-        int currentY = (int) this.location.getY();
-
-        switch (this.direction) {
-            case East -> currentX += 1;
-            case West -> currentX -= 1;
-            case South -> currentY -= 1;
-            default -> currentY += 1;
-        }
-        location.move(currentX, currentY);
+    public ImageView getImageView() {
+        return image;
     }
 
     /**
