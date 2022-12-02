@@ -1,7 +1,7 @@
 package ca.bcit.comp2522.termproject.vnj.BackToNature;
 
 import ca.bcit.comp2522.termproject.vnj.BackToNature.Plants.Plant;
-import javafx.scene.layout.GridPane;
+import javafx.scene.canvas.GraphicsContext;
 
 import java.awt.Point;
 import java.util.*;
@@ -13,6 +13,19 @@ import java.util.*;
  * @version 2022
  */
 public class FarmLand {
+    /* Default screen Setting */
+    /**
+     * Default tile size of the game in pixels.
+     */
+    public static final int ORIGINAL_TILE_SIZE = 16; // 16x16 tile
+    /**
+     * Default scale to accommodate with any screen resolutions. (To make images bigger)
+     */
+    public static final int SCALE = 3;
+    /**
+     * Default number for the tile size on the game.
+     */
+    public static final int TILE_SIZE = ORIGINAL_TILE_SIZE * SCALE; // 48x48 tile
     private final HashMap<Point, Soil> soils;
     private final HashMap<Point, Plant> crops;
     private final int rows;
@@ -21,14 +34,14 @@ public class FarmLand {
     /**
      * Construct an untill and an empty FarmLand object.
      *
-     * @param rows the number of rows
-     * @param columns the number of columns
+     * @param screenWidth the number of rows
+     * @param screenHeight the number of columns
      * @throws IllegalArgumentException when size of point is 0 or below
      */
-    public FarmLand(final int rows, final int columns) {
-        if (rows > 0 && columns > 0) {
-            this.rows = rows;
-            this.columns = columns;
+    public FarmLand(final int screenWidth, final int screenHeight) {
+        if (screenWidth > 0 && screenHeight > 0) {
+            this.rows = screenWidth / TILE_SIZE;
+            this.columns = screenHeight / TILE_SIZE;
         } else {
             throw new IllegalArgumentException("A map must have rows and columns!");
         }
@@ -43,10 +56,12 @@ public class FarmLand {
     private void getSoilImages() {
         Point point;
         Soil soil;
-        for (int r = 0; r < this.rows; r++) {
-            for (int c = 0; c < this.columns; c++) {
-                point = new Point(r, c);
-                if (r == 0 || c == 0 || c == columns - 1 || r == rows - 1) {
+        int maxWidth = rows * TILE_SIZE - TILE_SIZE; // max width of the window
+        int maxHeight = columns * TILE_SIZE - TILE_SIZE; // max height of the window
+        for (int row = maxWidth; row >= 0; row -= TILE_SIZE) {
+            for (int column = maxHeight; column >= 0; column -= TILE_SIZE) {
+                point = new Point(row, column);
+                if (row == 0 || row == maxWidth || column == 0 || column == maxHeight) {
                     soil = new Soil("grass.png", true);
                 } else {
                     soil = new Soil("untilledSoil.png", false);
@@ -125,10 +140,10 @@ public class FarmLand {
     /**
      * Draws each soil into the map.
      *
-     * @param gridPane a gridPane layout that holds the node images
+     * @param graphicsContext a graphicsContext layout that holds the node images
      */
-    public void draw(final GridPane gridPane) {
-        soils.forEach((point, soil) -> gridPane.add(soil.getImage(), point.x, point.y));
+    public void draw(final GraphicsContext graphicsContext) {
+        soils.forEach(((point, soil) -> graphicsContext.drawImage(soil.getImage(), point.x, point.y)));
     }
 
     /**
