@@ -24,31 +24,38 @@ public final class MainCharacter extends Character {
     private static MainCharacter singleInstance;
     private int stamina;
     private double money;
+
     /**
      * A Character constructor.
      *
-     * @param name the name of the character
-     * @param location starting location of the character.
-     * @param url the url location of the image
-     * @throws IllegalArgumentException when name is invalid
+     * @param name         the name of the character
+     * @param location     starting location of the character.
+     * @param url          the url location of the image
+     * @param screenWidth  the width of the screen
+     * @param screenHeight the height of the screen
+     * @throws IllegalArgumentException when name or url is invalid
      */
-    public MainCharacter(final String name, final Point location, final String url) {
-        super(name, location, url);
-        this.stamina = DEFAULT_MAX_STAMINA;
-        this.money = STARTING_MONEY;
+    public MainCharacter(final String name, final Point location, final String url,
+                         final int screenWidth, final int screenHeight) {
+        super(name, location, url, screenWidth, screenHeight);
     }
 
+
     /**
-     * Creates only one single instance of a player.
+     * A Character constructor.
      *
-     * @param name the name of the character
-     * @param location starting location of the character.
-     * @param url the url location of the image
+     * @param name         the name of the character
+     * @param location     starting location of the character.
+     * @param url          the url location of the image
+     * @param screenWidth  the width of the screen
+     * @param screenHeight the height of the screen
      * @return a MainCharacter instance
+     * @throws IllegalArgumentException when name or url is invalid
      */
-    public MainCharacter getInstance(final String name, final Point location, final String url) {
+    public MainCharacter getInstance(final String name, final Point location, final String url,
+                                     final int screenWidth, final int screenHeight) {
         if (singleInstance == null) {
-            singleInstance = new MainCharacter(name, location, url);
+            singleInstance = new MainCharacter(name, location, url, screenWidth, screenHeight);
         }
         return singleInstance;
     }

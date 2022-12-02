@@ -48,6 +48,10 @@ public class Driver extends Application {
      * Default screen height of the window.
      */
     public static final int SCREEN_HEIGHT = TILE_SIZE * MAX_ROWS;
+    /**
+     * Default starting point of the user.
+     */
+    public static final Point STARTING_POINT = new Point(360, 360);
     private MainCharacter player;
     /**
      * Creates and displays the game objects in a JavFX Window.
@@ -58,7 +62,8 @@ public class Driver extends Application {
     public void start(final Stage stage) {
         stage.setTitle("Back To Nature");
         stage.setResizable(false);
-        player = new MainCharacter("Joushua", new Point(0, 0), "FacingForwardSprite.png");
+        player = new MainCharacter("Joushua", new Point(STARTING_POINT.x, STARTING_POINT.y),
+                "FacingForwardSprite.png", SCREEN_WIDTH - TILE_SIZE, SCREEN_HEIGHT - TILE_SIZE);
         javafx.scene.canvas.Canvas canvas = new Canvas(SCREEN_WIDTH, SCREEN_HEIGHT);
         Group root = new Group(canvas, player.getImageView());
         GraphicsContext graphicsContext = canvas.getGraphicsContext2D();

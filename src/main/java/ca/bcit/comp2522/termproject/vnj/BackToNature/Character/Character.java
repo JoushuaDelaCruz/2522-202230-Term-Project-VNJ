@@ -16,7 +16,7 @@ public abstract class Character {
     /**
      * Default number of units the character moves.
      */
-    public static final int MOVEMENT_IN_UNITS = 10;
+    public static final int MOVEMENT_IN_UNITS = 15;
     /**
      * The number seconds the next movement of a character will occur.
      */
@@ -59,6 +59,8 @@ public abstract class Character {
     private boolean isMovingRight;
     private boolean spriteMovement;
     private int spriteCounter;
+    private final int screenWidth;
+    private final int screenHeight;
 
     /**
      * A Character constructor.
@@ -66,9 +68,12 @@ public abstract class Character {
      * @param name     the name of the character
      * @param location starting location of the character.
      * @param url      the url location of the image
+     * @param screenHeight the height of the screen
+     * @param screenWidth the width of the screen
      * @throws IllegalArgumentException when name or url is invalid
      */
-    public Character(final String name, final Point location, final String url) {
+    public Character(final String name, final Point location, final String url,
+                     final int screenWidth, final int screenHeight) {
         if (name != null && name.trim().length() != 0) {
             this.name = name;
         } else {
@@ -80,6 +85,12 @@ public abstract class Character {
             image.setY(location.y);
         } else {
             throw new IllegalArgumentException("A character must have a name!");
+        }
+        if (screenWidth > 0 && screenHeight > 0) {
+            this.screenWidth = screenWidth;
+            this.screenHeight = screenHeight;
+        } else {
+            throw new IllegalArgumentException("A character must know the boundaries!");
         }
         this.location = location;
     }
@@ -131,10 +142,26 @@ public abstract class Character {
     private void userMoving(final int moveDirection) {
         draw(moveDirection);
         switch (moveDirection) {
-            case NORTH -> image.setY(image.getY() - MOVEMENT_IN_UNITS);
-            case SOUTH -> image.setY(image.getY() + MOVEMENT_IN_UNITS);
-            case EAST -> image.setX(image.getX() + MOVEMENT_IN_UNITS);
-            case WEST -> image.setX(image.getX() - MOVEMENT_IN_UNITS);
+            case NORTH -> {
+                if (image.getY() > 0) {
+                    image.setY(image.getY() - MOVEMENT_IN_UNITS);
+                }
+            }
+            case SOUTH -> {
+                if (image.getY() < this.screenHeight) {
+                    image.setY(image.getY() + MOVEMENT_IN_UNITS);
+                }
+            }
+            case EAST -> {
+                if (image.getX() < this.screenWidth) {
+                    image.setX(image.getX() + MOVEMENT_IN_UNITS);
+                }
+            }
+            case WEST -> {
+                if (image.getX() > 0) {
+                    image.setX(image.getX() - MOVEMENT_IN_UNITS);
+                }
+            }
             default -> {
             }
         }
@@ -200,15 +227,6 @@ public abstract class Character {
      */
     public String getName() {
         return name;
-    }
-
-    /**
-     * Returns the current location of the character.
-     *
-     * @return location as a String
-     */
-    public Point getLocation() {
-        return location;
     }
 
     /**
