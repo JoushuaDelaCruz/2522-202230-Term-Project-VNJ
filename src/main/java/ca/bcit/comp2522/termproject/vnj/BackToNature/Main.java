@@ -5,7 +5,11 @@ import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Button;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
@@ -83,15 +87,31 @@ public class Main extends Application {
      */
     public void start(final Stage stage) {
         stage.setTitle("Back To Nature");
+        Image backgrounds = new Image("friends.jpg");
+        Image startButton = new Image("button.png");
+        ImageView button = new ImageView(startButton);
+        ImageView background = new ImageView(backgrounds);
         stage.setResizable(false);
         player = new MainCharacter("Joushua", new Point(0, 0), "FacingForwardSprite.png");
+        Group start = new Group(background);
+        Scene startUp = new Scene(start);
         GridPane gridPane = new GridPane();
         Group root = new Group(gridPane, player.getImageView());
         Scene scene = new Scene(root, SCREEN_WIDTH, SCREEN_HEIGHT);
         farmLand = new FarmLand(MAX_ROWS, MAX_COLUMNS);
         farmLand.draw(gridPane);
+
+        Button btn = new Button();
+        btn.setGraphic(button);
+        btn.setFocusTraversable(false);
+        btn.setBackground(null);
+        btn.setLayoutX(300);
+        btn.setLayoutY(360);
+        btn.setOnAction(e -> stage.setScene(scene));
+        start.getChildren().add(btn);
+
         scene.setOnKeyPressed(this::processKeyPress);
-        stage.setScene(scene);
+        stage.setScene(startUp);
         stage.show();
 //        run();
     }
