@@ -3,6 +3,7 @@ package ca.bcit.comp2522.termproject.vnj.BackToNature;
 import ca.bcit.comp2522.termproject.vnj.BackToNature.Character.MainCharacter;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -60,6 +61,14 @@ public class Driver extends Application {
      */
     public static final int DEFAULT_BTN_YCOORDINATE = 360;
     /**
+     * Default x-layout of the end btn.
+     */
+    public static final int END_BTN_XCOORDINATE = 670;
+    /**
+     * Default y-layout of the end btn.
+     */
+    public static final int END_BTN_YCOORDINATE = 720;
+    /**
      * Default numbers of wilted crops for the game player to lose.
      */
     public static final int DEFAULT_GAME_OVER = 3;
@@ -80,11 +89,18 @@ public class Driver extends Application {
     public void start(final Stage stage) {
         stage.setTitle("Back To Nature");
         Image backgrounds = new Image("friends.jpg", SCREEN_WIDTH, SCREEN_HEIGHT, true, true);
+        Image exit = new Image("EndPage.png", SCREEN_WIDTH, SCREEN_HEIGHT, true, true);
         Image startButton = new Image("button.png");
+        Image exitButton = new Image("ExitBtn.png");
+        ImageView endButton = new ImageView("EndButton.png");
+        ImageView exitBtn = new ImageView(exitButton);
+        ImageView exitPage = new ImageView(exit);
         ImageView button = new ImageView(startButton);
         ImageView background = new ImageView(backgrounds);
         Group start = new Group(background);
+        Group end = new Group(exitPage);
         Scene startUp = new Scene(start);
+        Scene endPage = new Scene(end);
         gameOver = false;
         stage.setResizable(false);
         player = new MainCharacter("Joushua", new Point(STARTING_POINT.x, STARTING_POINT.y),
@@ -104,7 +120,23 @@ public class Driver extends Application {
         btn.setLayoutX(DEFAULT_BTN_XCOORDINATE);
         btn.setLayoutY(DEFAULT_BTN_YCOORDINATE);
         btn.setOnAction(e -> stage.setScene(scene));
+        Button endBtn = new Button();
+        endBtn.setGraphic(endButton);
+        endBtn.setFocusTraversable(false);
+        endBtn.setBackground(null);
+        endBtn.setLayoutX(END_BTN_XCOORDINATE);
+        endBtn.setLayoutY(END_BTN_YCOORDINATE);
+        root.getChildren().add(endBtn);
         start.getChildren().add(btn);
+        endBtn.setOnAction(e -> stage.setScene(endPage));
+        Button closeBtn = new Button();
+        closeBtn.setGraphic(exitBtn);
+        closeBtn.setFocusTraversable(false);
+        closeBtn.setBackground(null);
+        closeBtn.setLayoutX(END_BTN_XCOORDINATE);
+        closeBtn.setLayoutY(END_BTN_YCOORDINATE);
+        end.getChildren().add(closeBtn);
+        closeBtn.setOnAction(e -> Platform.exit());
         stage.setScene(startUp);
         stage.show();
         AnimationTimer timer = new Timer();
