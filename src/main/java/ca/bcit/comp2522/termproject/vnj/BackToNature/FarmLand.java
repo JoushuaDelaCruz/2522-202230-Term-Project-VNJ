@@ -1,6 +1,7 @@
 package ca.bcit.comp2522.termproject.vnj.BackToNature;
 
 import ca.bcit.comp2522.termproject.vnj.BackToNature.Plants.Plant;
+import ca.bcit.comp2522.termproject.vnj.BackToNature.Plants.Turnip;
 import javafx.scene.canvas.GraphicsContext;
 
 import java.awt.Point;
@@ -26,6 +27,18 @@ public class FarmLand {
      * Default number for the tile size on the game.
      */
     public static final int TILE_SIZE = ORIGINAL_TILE_SIZE * SCALE; // 48x48 tile
+    /**
+     * Default rows where soils will be located.
+     */
+    public static final int[] ROWS_TO_GROW = {2, 4, 6, 8, 10, 12};
+    /**
+     * Default columns where soils will be located.
+     */
+    public static final int[] COLUMNS_TO_GROW = {2, 4, 6, 8, 10, 12};
+    /**
+     * Default number of days the plant will wilt.
+     */
+    public static final int DEFAULT_DAYS_TO_WILT = 5;
     private final HashMap<Point, Soil> soils;
     private final HashMap<Point, Plant> crops;
     private final int rows;
@@ -72,14 +85,26 @@ public class FarmLand {
     }
 
     /**
+     * Change the soil into a seed soil.
+     */
+    public void drawCrops() {
+        for (int row : ROWS_TO_GROW) {
+            for (int column : COLUMNS_TO_GROW) {
+                setSeedTillSoilImage(new Point(row * TILE_SIZE, column * TILE_SIZE));
+            }
+        }
+    }
+
+    /**
      * Changes the tile that has been tilled into a tilled soil image.
      *
      * @param point the tile location.
      */
     public void setTillSoilImage(final Point point) {
-        if (soils.get(point).getIsFence()) {
-            soils.get(point).setImage("tillSoil.png");
-        }
+        int row = (point.x / TILE_SIZE + 1) * TILE_SIZE;
+        int column = (point.y / TILE_SIZE + 1) * TILE_SIZE;
+        point.setLocation(row, column);
+        soils.get(point).setImage("tillSoil.png");
     }
 
     /**
@@ -94,13 +119,29 @@ public class FarmLand {
     }
 
     /**
+     * Dry all soils and resets their image.
+     */
+    public void drySoils() {
+        for (Map.Entry<Point, Plant> plantEntry: crops.entrySet()) {
+            soils.get(plantEntry.getKey()).water(false);
+            if (plantEntry.getValue().isBudding() && !plantEntry.getValue().getIsWilted()) {
+                setBuddingTurnipSoilImage(plantEntry.getKey());
+            }
+            if (!plantEntry.getValue().isBudding() && !plantEntry.getValue().isRipening()) {
+                setSeedTillSoilImage(plantEntry.getKey());
+            }
+        }
+    }
+
+    /**
      * Changes the tile that has been tilled and added seed into seeded till soil image.
      *
      * @param point the tile location.
      */
     public void setSeedTillSoilImage(final Point point) {
-        if (soils.get(point).getIsFence() && soils.get(point).getIsTill()) {
+        if (soils.get(point).getIsFence()) {
             soils.get(point).setImage("tillWithSeeds.png");
+            crops.putIfAbsent(point, new Turnip());
         }
     }
 
@@ -121,19 +162,41 @@ public class FarmLand {
      * @param point the tile location.
      */
     public void setSeedTillWateredSoil(final Point point) {
-        if (soils.get(point).getIsFence() && soils.get(point).getIsWatered() && soils.get(point).getIsTill()) {
+        if (soils.get(point).getIsFence() && soils.get(point).getIsWatered()) {
             soils.get(point).setImage("wateredSeededSoil.png");
         }
     }
 
     /**
-     * Changes the tile that has been watered into a watered soil image.
+     * Changes the image of the plant into a budding stage.
      *
-     * @param point the tile location.
+     * @param point the tile location
      */
-    public void setWaterSoilImage(final Point point) {
-        if (soils.get(point).getIsFence() && !soils.get(point).getIsWatered() && soils.get(point).getIsTill()) {
-            soils.get(point).setImage("tillSoil.png");
+    public void setBuddingTurnipSoilImage(final Point point) {
+        if (soils.get(point).getIsFence() && soils.containsKey(point)) {
+            soils.get(point).setImage("BuddingTurnipSoil.png");
+        }
+    }
+
+    /**
+     * Changes the image of the soil into a budding turnip with watered soil.
+     *
+     * @param point the location of the soil
+     */
+    public void setBuddingWateredImage(final Point point) {
+        if (soils.get(point).getIsFence() && soils.containsKey(point) && crops.get(point).isBudding()) {
+            soils.get(point).setImage("BuddingWateredSoil.png");
+        }
+    }
+
+    /**
+     * Changes the image of the plant into a wilted plant.
+     *
+     * @param point the tile location
+     */
+    public void setWiltedTurnipSoilImage(final Point point) {
+        if (soils.get(point).getIsFence() && soils.containsKey(point) && crops.get(point).isBudding()) {
+            soils.get(point).setImage("WiltedTurnipSoil.png");
         }
     }
 
@@ -175,37 +238,18 @@ public class FarmLand {
      * Waters the soil located on the given point.
      *
      * @param point the location of the soil
-     * @return true if a soil was watered else false
      */
-    public boolean waterSoil(final Point point) {
+    public void waterSoil(final Point point) {
+        int row = (point.x / TILE_SIZE + 1) * TILE_SIZE;
+        int column = (point.y / TILE_SIZE + 1) * TILE_SIZE;
+        point.setLocation(row, column);
         Soil soil = soils.get(point);
-        if (soil != null) {
+        if (soil != null && crops.containsKey(point) && soil.getIsFence() && !crops.get(point).isRipening()) {
             soil.water(true);
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    /**
-     * Drys all the soil.
-     */
-    public void dryAllSoil() {
-        for (Soil soil: soils.values()) {
-            if (soil.getIsWatered()) {
-                soil.water(false);
-            }
-        }
-    }
-
-    /**
-     * Untill all the soil that has not plants.
-     */
-    public void unTillAllSoil() {
-        Set<Point> pointsWithPlants = crops.keySet();
-        for (Map.Entry<Point, Soil> soil: soils.entrySet()) {
-            if (!pointsWithPlants.contains(soil.getKey()) && soil.getValue().getIsTill()) {
-                soil.getValue().till(false);
+            if (crops.get(point).isBudding() && !crops.get(point).getIsWilted()) {
+                setBuddingWateredImage(point);
+            } else if (!crops.get(point).isRipening() && !crops.get(point).isBudding()) {
+                setSeedTillWateredSoil(point);
             }
         }
     }
@@ -230,14 +274,42 @@ public class FarmLand {
     }
 
     /**
-     * Grows the plant at the end of the day.
+     * Grows the plant with watered soil and not wilting, at the end of the day. If the soil is not watered
+     * after DEFAULT_DAYS_TO_WILT the plant will wilt.
      */
-    public void growAllPlants() {
-        for (Plant plant : crops.values()) {
-            plant.grow();
+    public void growPlants() {
+        for (Map.Entry<Point, Plant> entry : crops.entrySet()) {
+            Point point = entry.getKey();
+            Plant crop = entry.getValue();
+            if (soils.get(point).getIsWatered() && !crop.getIsWilted()) {
+                crop.grow();
+            } else {
+                soils.get(point).soilIsNotWatered();
+                if (crop.isBudding()
+                        && soils.get(point).getDaysNotWatered() > DEFAULT_DAYS_TO_WILT
+                        && !crop.getIsWilted()) {
+                    crop.wilt();
+                }
+            }
         }
     }
 
+    /**
+     * Changes image of the plant into their stage.
+     */
+    public void drawPlants() {
+        for (Map.Entry<Point, Plant> entry : crops.entrySet()) {
+            Point point = entry.getKey();
+            Plant crop = entry.getValue();
+            if (crop.isBudding() && !crop.getIsWilted()) {
+                setBuddingTurnipSoilImage(point);
+            } else if (crop.isRipening() && !crop.getIsWilted()) {
+                setTurnipSoilImage(point);
+            } else if (crop.getIsWilted()) {
+                setWiltedTurnipSoilImage(point);
+            }
+        }
+    }
     /**
      * Shows a description about the FarmLand.
      *

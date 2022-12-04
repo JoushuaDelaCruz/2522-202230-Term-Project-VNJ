@@ -20,7 +20,7 @@ public abstract class Character {
     /**
      * The number seconds the next movement of a character will occur.
      */
-    public static final int SECONDS_TO_MOVE = 10;
+    public static final int SECONDS_TO_MOVE = 8;
     /**
      * Default number that is associated with North.
      */
@@ -41,10 +41,6 @@ public abstract class Character {
      * The name of the character.
      */
     protected String name;
-    /**
-     * Location of the character.
-     */
-    protected Point location;
     /**
      * The direction the character is facing.
      */
@@ -92,7 +88,7 @@ public abstract class Character {
         } else {
             throw new IllegalArgumentException("A character must know the boundaries!");
         }
-        this.location = location;
+        this.direction = SOUTH;
     }
 
     /**
@@ -239,6 +235,24 @@ public abstract class Character {
     }
 
     /**
+     * Returns the user's x-coordinate.
+     *
+     * @return the x-coordinate as an int
+     */
+    public int getXCoordinate() {
+        return (int) image.getX();
+    }
+
+    /**
+     * Returns the user's y-coordinate.
+     *
+     * @return the y-coordinate as an int
+     */
+    public int getYCoordinate() {
+        return (int) image.getY();
+    }
+
+    /**
      * Sets the isMovingUp to either true or false.
      *
      * @param movingUp either true or false
@@ -286,7 +300,7 @@ public abstract class Character {
             return false;
         }
         Character character = (Character) object;
-        return name.equals(character.name) && location.equals(character.location) && direction == character.direction;
+        return name.equals(character.name) && direction == character.direction;
     }
 
     /**
@@ -296,7 +310,7 @@ public abstract class Character {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(name, location, direction);
+        return Objects.hash(name, direction);
     }
 
     /**
@@ -308,7 +322,6 @@ public abstract class Character {
     public String toString() {
         return "Character{"
                 + "name='" + name + '\''
-                + ", location=" + location
                 + ", direction=" + direction
                 + '}';
     }

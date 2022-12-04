@@ -53,6 +53,9 @@ public class Driver extends Application {
      */
     public static final Point STARTING_POINT = new Point(360, 360);
     private MainCharacter player;
+    private FarmLand farmLand;
+    private GraphicsContext graphicsContext;
+    private boolean gameOver;
     /**
      * Creates and displays the game objects in a JavFX Window.
      *
@@ -61,14 +64,15 @@ public class Driver extends Application {
     @Override
     public void start(final Stage stage) {
         stage.setTitle("Back To Nature");
+        gameOver = false;
         stage.setResizable(false);
         player = new MainCharacter("Joushua", new Point(STARTING_POINT.x, STARTING_POINT.y),
                 "FacingForwardSprite.png", SCREEN_WIDTH - TILE_SIZE, SCREEN_HEIGHT - TILE_SIZE);
         javafx.scene.canvas.Canvas canvas = new Canvas(SCREEN_WIDTH, SCREEN_HEIGHT);
         Group root = new Group(canvas, player.getImageView());
-        GraphicsContext graphicsContext = canvas.getGraphicsContext2D();
+        graphicsContext = canvas.getGraphicsContext2D();
         Scene scene = new Scene(root, SCREEN_WIDTH, SCREEN_HEIGHT);
-        FarmLand farmLand = new FarmLand(SCREEN_WIDTH, SCREEN_HEIGHT);
+        farmLand = new FarmLand(SCREEN_WIDTH, SCREEN_HEIGHT);
         farmLand.draw(graphicsContext);
         scene.setOnKeyPressed(this::processKeyPressed);
         scene.setOnKeyReleased(keyEvent -> player.resetMovements());
@@ -76,6 +80,7 @@ public class Driver extends Application {
         stage.show();
         AnimationTimer timer = new Timer();
         timer.start();
+        farmLand.drawCrops();
     }
 
     /**
@@ -84,14 +89,26 @@ public class Driver extends Application {
      * @param event the KeyEvent
      */
     private void processKeyPressed(final KeyEvent event) {
-        switch (event.getCode()) {
-            case W -> player.setMovingUp(true);
-            case S -> player.setMovingDown(true);
-            case A -> player.setMovingLeft(true);
-            case D -> player.setMovingRight(true);
-            default -> {
+        if (!gameOver) {
+            switch (event.getCode()) {
+                case W -> player.setMovingUp(true);
+                case S -> player.setMovingDown(true);
+                case A -> player.setMovingLeft(true);
+                case D -> player.setMovingRight(true);
+                case SPACE -> waterPlant();
+                default -> {
+                }
             }
         }
+    }
+
+    /**
+     * Waters the soil.
+     */
+    public void waterPlant() {
+        Point userLocation = new Point(player.getXCoordinate(), player.getYCoordinate());
+        farmLand.waterSoil(userLocation);
+        farmLand.draw(graphicsContext);
     }
     /**
      * A timer that updates all the frame in the game while it is not yet game over.
@@ -105,11 +122,15 @@ public class Driver extends Application {
          * Default number of nano in a second.
          */
         public static final int NANO_UNITS_IN_SECOND = 1000000000;
+        /**
+         * Default number of days for the plants to grow.
+         */
+        public static final int DEFAULT_DAYS_TO_GROW = 3;
         private final double drawInterval;
         private double delta;
         private long lastTime;
         private long timer;
-        private int drawCount;
+        private int days;
 
         /**
          * Constructs a timer into their default value.
@@ -132,13 +153,19 @@ public class Driver extends Application {
 
             if (delta >= 1) {
                 update();
+                repaint();
                 delta--;
-                drawCount++;
             }
             if (timer >= NANO_UNITS_IN_SECOND) {
-                System.out.println("FPS: " + drawCount);
-                drawCount = 0;
                 timer = 0;
+                days++;
+            }
+            if (days >= DEFAULT_DAYS_TO_GROW) {
+                grow();
+                days = 0;
+            }
+            if (gameOver) {
+                stop();
             }
         }
     }
@@ -148,6 +175,22 @@ public class Driver extends Application {
      */
     public void update() {
         player.move();
+    }
+
+    /**
+     * Re-draws the map.
+     */
+    public void repaint() {
+        farmLand.draw(graphicsContext);
+    }
+
+    /**
+     * Grows the plants.
+     */
+    public void grow() {
+        farmLand.growPlants();
+        farmLand.drawPlants();
+        farmLand.drySoils();
     }
     /**
      * Launches the JavaFX application.  We still need a main method in our

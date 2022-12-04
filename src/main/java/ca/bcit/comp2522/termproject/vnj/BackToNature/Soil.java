@@ -27,6 +27,7 @@ public class Soil {
     private final boolean isFence;
     private boolean isTill;
     private boolean isWatered;
+    private int daysNotWatered;
 
     /**
      * Constructor of an object of type Soil.
@@ -90,6 +91,28 @@ public class Soil {
         return isWatered;
     }
 
+    /**
+     * Returns the number of days the soil has not been watered.
+     *
+     * @return daysNotWatered as an int
+     */
+    public int getDaysNotWatered() {
+        return daysNotWatered;
+    }
+
+    /**
+     * Increments daysNotWatered.
+     */
+    public void soilIsNotWatered() {
+        daysNotWatered++;
+    }
+
+    /**
+     * Resets the number of days the soil is watered into 0.
+     */
+    public void soilIsWatered() {
+        daysNotWatered = 0;
+    }
     /**
      * Water state of the soil.
      *
