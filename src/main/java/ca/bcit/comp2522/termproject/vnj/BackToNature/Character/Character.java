@@ -9,20 +9,18 @@ import java.util.Objects;
 /**
  * A Character.
  *
- * @version 2022
  * @author Joushua Dela Cruz
+ * @version 2022
  */
 public abstract class Character {
     /**
-     * List of four direction that a character may be facing.
-     */
-    public enum Direction {
-        North, South, East, West
-    }
-    /**
      * Default number of units the character moves.
      */
-    public static final int MOVEMENT_IN_UNITS = 10;
+    public static final int MOVEMENT_IN_UNITS = 15;
+    /**
+     * The number seconds the next movement of a character will occur.
+     */
+    public static final int SECONDS_TO_MOVE = 8;
     /**
      * Default number that is associated with North.
      */
@@ -44,27 +42,34 @@ public abstract class Character {
      */
     protected String name;
     /**
-     * Location of the character.
-     */
-    protected Point location;
-    /**
      * The direction the character is facing.
      */
-    protected Direction direction;
+    protected int direction;
     /**
      * The holds the images of the character.
      */
     protected final ImageView image;
+    private boolean isMovingUp;
+    private boolean isMovingDown;
+    private boolean isMovingLeft;
+    private boolean isMovingRight;
     private boolean spriteMovement;
+    private int spriteCounter;
+    private final int screenWidth;
+    private final int screenHeight;
+
     /**
      * A Character constructor.
      *
-     * @param name the name of the character
+     * @param name     the name of the character
      * @param location starting location of the character.
-     * @param url the url location of the image
+     * @param url      the url location of the image
+     * @param screenHeight the height of the screen
+     * @param screenWidth the width of the screen
      * @throws IllegalArgumentException when name or url is invalid
      */
-    public Character(final String name, final Point location, final String url) {
+    public Character(final String name, final Point location, final String url,
+                     final int screenWidth, final int screenHeight) {
         if (name != null && name.trim().length() != 0) {
             this.name = name;
         } else {
@@ -77,73 +82,128 @@ public abstract class Character {
         } else {
             throw new IllegalArgumentException("A character must have a name!");
         }
-        this.direction = Direction.North;
-        this.location = location;
+        if (screenWidth > 0 && screenHeight > 0) {
+            this.screenWidth = screenWidth;
+            this.screenHeight = screenHeight;
+        } else {
+            throw new IllegalArgumentException("A character must know the boundaries!");
+        }
+        this.direction = SOUTH;
     }
 
     /**
      * Moves the character to new position.
-     *
-     * @param move the default number that is associated with direction.
      */
-    public void move(final int move) {
+    public void move() {
+        spriteCounter++;
         spriteMovement = !spriteMovement;
-        switch (move) {
-            case NORTH -> {
-                draw(NORTH);
-                image.setY(image.getY() - MOVEMENT_IN_UNITS);
-                direction = Direction.North;
+        if (spriteCounter > SECONDS_TO_MOVE) {
+            spriteCounter = 0;
+            if (isMovingUp) {
+                userMoving(NORTH);
             }
-            case SOUTH -> {
-                draw(SOUTH);
-                image.setY(image.getY() + MOVEMENT_IN_UNITS);
-                direction = Direction.South;
+            if (isMovingDown) {
+                userMoving(SOUTH);
             }
-            case EAST -> {
-                draw(EAST);
-                image.setX(image.getX() + MOVEMENT_IN_UNITS);
-                direction = Direction.East;
+            if (isMovingLeft) {
+                userMoving(WEST);
             }
-            case WEST -> {
-                draw(WEST);
-                image.setX(image.getX() - MOVEMENT_IN_UNITS);
-                direction = Direction.West;
+            if (isMovingRight) {
+                userMoving(EAST);
             }
-            default -> { }
         }
     }
 
-    private void draw(final int directionImage) {
-        switch (directionImage) {
+    /**
+     * Resets the movements into false and resets the image of the user into a standing sprite.
+     */
+    public void resetMovements() {
+        if (isMovingUp) {
+            isMovingUp = false;
+            image.setImage(new Image("FacingBackwardSprite.png"));
+        }
+        if (isMovingDown) {
+            isMovingDown = false;
+            image.setImage(new Image("FacingForwardSprite.png"));
+        }
+        if (isMovingLeft) {
+            isMovingLeft = false;
+            image.setImage(new Image("FacingLeftSprite.png"));
+        }
+        if (isMovingRight) {
+            isMovingRight = false;
+            image.setImage(new Image("FacingRightSprite.png"));
+        }
+    }
+    private void userMoving(final int moveDirection) {
+        draw(moveDirection);
+        switch (moveDirection) {
             case NORTH -> {
-                if (spriteMovement) {
-                    image.setImage(new Image("FacingBackwards1.png"));
-                } else {
-                    image.setImage(new Image("FacingBackwards2.png"));
+                if (image.getY() > 0) {
+                    image.setY(image.getY() - MOVEMENT_IN_UNITS);
                 }
             }
             case SOUTH -> {
-                if (spriteMovement) {
-                    image.setImage(new Image("FacingForward1.png"));
-                } else {
-                    image.setImage(new Image("FacingForward2.png"));
+                if (image.getY() < this.screenHeight) {
+                    image.setY(image.getY() + MOVEMENT_IN_UNITS);
                 }
             }
             case EAST -> {
-                if (spriteMovement) {
-                    image.setImage(new Image("FacingRightSprite1.png"));
-                } else {
-                    image.setImage(new Image("FacingRightSprite2.png"));
+                if (image.getX() < this.screenWidth) {
+                    image.setX(image.getX() + MOVEMENT_IN_UNITS);
                 }
             }
             case WEST -> {
-                if (spriteMovement) {
-                    image.setImage(new Image("FacingLeft1.png"));
-                } else {
-                    image.setImage(new Image("FacingLeft2.png"));
+                if (image.getX() > 0) {
+                    image.setX(image.getX() - MOVEMENT_IN_UNITS);
                 }
             }
-            default -> { }
+            default -> {
+            }
+        }
+        this.direction = moveDirection;
+    }
+
+    private void draw(final int userDirection) {
+        switch (userDirection) {
+            case NORTH -> drawSpriteBackward();
+            case SOUTH -> drawSpriteForward();
+            case EAST -> drawSpriteRight();
+            case WEST -> drawSpriteLeft();
+            default -> {
+            }
+        }
+    }
+
+    private void drawSpriteBackward() {
+        if (spriteMovement) {
+            image.setImage(new Image("FacingBackwards1.png"));
+        } else {
+            image.setImage(new Image("FacingBackwards2.png"));
+        }
+    }
+
+    private void drawSpriteForward() {
+        if (spriteMovement) {
+            image.setImage(new Image("FacingForward1.png"));
+        } else {
+            image.setImage(new Image("FacingForward2.png"));
+        }
+    }
+
+    private void drawSpriteRight() {
+        if (spriteMovement) {
+            image.setImage(new Image("FacingRightSprite1.png"));
+        } else {
+            image.setImage(new Image("FacingRightSprite2.png"));
+        }
+    }
+
+    private void drawSpriteLeft() {
+        if (spriteMovement) {
+            image.setImage(new Image("FacingLeft1.png"));
+        } else {
+            image.setImage(new Image("FacingLeft2.png"));
         }
     }
 
@@ -166,21 +226,63 @@ public abstract class Character {
     }
 
     /**
-     * Returns the current location of the character.
+     * Returns the direction the character is currently facing.
      *
-     * @return location as a String
+     * @return direction as an int.
      */
-    public Point getLocation() {
-        return location;
+    public int getDirection() {
+        return direction;
     }
 
     /**
-     * Returns the direction the character is currently facing.
+     * Returns the user's x-coordinate.
      *
-     * @return direction as a String.
+     * @return the x-coordinate as an int
      */
-    public Direction getDirection() {
-        return direction;
+    public int getXCoordinate() {
+        return (int) image.getX();
+    }
+
+    /**
+     * Returns the user's y-coordinate.
+     *
+     * @return the y-coordinate as an int
+     */
+    public int getYCoordinate() {
+        return (int) image.getY();
+    }
+
+    /**
+     * Sets the isMovingUp to either true or false.
+     *
+     * @param movingUp either true or false
+     */
+    public void setMovingUp(final boolean movingUp) {
+        isMovingUp = movingUp;
+    }
+    /**
+     * Sets the isMovingDown to either true or false.
+     *
+     * @param movingDown either true or false
+     */
+    public void setMovingDown(final boolean movingDown) {
+        isMovingDown = movingDown;
+    }
+    /**
+     * Sets the isMovingLeft to either true or false.
+     *
+     * @param movingLeft either true or false
+     */
+    public void setMovingLeft(final boolean movingLeft) {
+        isMovingLeft = movingLeft;
+    }
+    /**
+     * Sets the isMovingRight to either true or false.
+     *
+     * @param movingRight either true or false
+     */
+    public void setMovingRight(final boolean movingRight) {
+        isMovingRight = movingRight;
     }
 
     /**
@@ -198,7 +300,7 @@ public abstract class Character {
             return false;
         }
         Character character = (Character) object;
-        return name.equals(character.name) && location.equals(character.location) && direction == character.direction;
+        return name.equals(character.name) && direction == character.direction;
     }
 
     /**
@@ -208,7 +310,7 @@ public abstract class Character {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(name, location, direction);
+        return Objects.hash(name, direction);
     }
 
     /**
@@ -220,7 +322,6 @@ public abstract class Character {
     public String toString() {
         return "Character{"
                 + "name='" + name + '\''
-                + ", location=" + location
                 + ", direction=" + direction
                 + '}';
     }

@@ -1,7 +1,6 @@
 package ca.bcit.comp2522.termproject.vnj.BackToNature;
 
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 
 import java.util.Objects;
 
@@ -24,10 +23,11 @@ public class Soil {
      * Default number for the tile size on the game.
      */
     public static final int TILE_SIZE = ORIGINAL_TILE_SIZE * SCALE; // 48x48 tile
-    private final ImageView image;
+    private Image image;
     private final boolean isFence;
     private boolean isTill;
     private boolean isWatered;
+    private int daysNotWatered;
 
     /**
      * Constructor of an object of type Soil.
@@ -37,14 +37,11 @@ public class Soil {
      * @throws IllegalArgumentException if the soil does not have an image!
      */
     public Soil(final String url, final boolean isFence) {
-        image = new ImageView();
         if (url != null && url.trim().length() != 0) {
-            this.image.setImage(new Image(url));
+            this.image = new Image(url, TILE_SIZE, TILE_SIZE, false, true);
         } else {
             throw new IllegalArgumentException("A soil must have an image!");
         }
-        this.image.setFitHeight(TILE_SIZE);
-        this.image.setFitWidth(TILE_SIZE);
         this.isFence = isFence;
         this.isTill = false;
         this.isWatered = false;
@@ -53,9 +50,9 @@ public class Soil {
     /**
      * Returns the image view stored in the tile.
      *
-     * @return image as an ImageView
+     * @return image as an Image
      */
-    public ImageView getImage() {
+    public Image getImage() {
         return image;
     }
 
@@ -73,7 +70,7 @@ public class Soil {
      * @param imageUrl the url of the image
      */
     public void setImage(final String imageUrl) {
-        this.image.setImage(new Image(imageUrl));
+        this.image = new Image(imageUrl, TILE_SIZE, TILE_SIZE, false, true);
     }
 
     /**
@@ -94,6 +91,28 @@ public class Soil {
         return isWatered;
     }
 
+    /**
+     * Returns the number of days the soil has not been watered.
+     *
+     * @return daysNotWatered as an int
+     */
+    public int getDaysNotWatered() {
+        return daysNotWatered;
+    }
+
+    /**
+     * Increments daysNotWatered.
+     */
+    public void soilIsNotWatered() {
+        daysNotWatered++;
+    }
+
+    /**
+     * Resets the number of days the soil is watered into 0.
+     */
+    public void soilIsWatered() {
+        daysNotWatered = 0;
+    }
     /**
      * Water state of the soil.
      *

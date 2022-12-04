@@ -30,6 +30,10 @@ public abstract class Plant {
      */
     protected Growth stage;
     /**
+     * Weather the plant is wilted or not.
+     */
+    protected boolean isWilted;
+    /**
      * Constructs an object of type crop.
      *
      * @throws IllegalArgumentException when price is below 0
@@ -37,6 +41,7 @@ public abstract class Plant {
     public Plant() {
         this.days = START_PLANTED;
         this.stage = Growth.seed;
+        this.isWilted = false;
     }
 
     /**
@@ -49,14 +54,38 @@ public abstract class Plant {
     }
 
     /**
-     * Returns the number of days the plant has been planted.
+     * Returns true if plant is in budding stage.
      *
-     * @return days as an int
+     * @return true if plant is budding
      */
-    public Growth getStage() {
-        return stage;
+    public boolean isBudding() {
+        return stage == Growth.budding;
     }
 
+    /**
+     * Returns true if plant is ripe.
+     *
+     * @return if plant is ripe.
+     */
+    public boolean isRipening() {
+        return stage == Growth.ripe;
+    }
+
+    /**
+     * Returns true if the plant is wilted, else false.
+     *
+     * @return if the plant is still alive.
+     */
+    public boolean getIsWilted() {
+        return isWilted;
+    }
+
+    /**
+     * Sets the plant to wilt state.
+     */
+    public void wilt() {
+        isWilted = true;
+    }
     /**
      * Increments day and grows the plant to a new stage.
      */

@@ -32,11 +32,10 @@ public class Turnip extends Plant implements Harvestable {
         if (this.days >= DEFAULT_NUM_TO_BUDDING && this.days <= DEFAULT_NUM_TO_RIPENING) {
             this.stage = Growth.budding;
         }
-        if (this.days >= DEFAULT_NUM_TO_RIPENING) {
+        if (this.days >= DEFAULT_NUM_TO_RIPENING && !this.isWilted) {
             this.stage = Growth.ripe;
         }
     }
-
     /**
      * Creates a sellable crop if the plant is in ripening.
      *
