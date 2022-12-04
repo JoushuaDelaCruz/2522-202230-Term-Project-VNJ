@@ -15,4 +15,9 @@ This is written in markdown. Read about markdown here: [markdowncheatsheet](http
 - jackberena
 
 ## Any important comments you'd like to make about your work:
-Replace this line with any comments you want to share
+### Instructions:
+    You must not allow 3 turnips to wilt. To win, grow all the tunips into their ripening stage.
+    To water the plants, either stand on top of the tile or go to the left and face the tile and press SPACE
+    You can also exit the game any time!
+    
+    To move: A for west, W for north, S for South, D for east
