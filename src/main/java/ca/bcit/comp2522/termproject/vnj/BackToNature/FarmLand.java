@@ -43,6 +43,7 @@ public class FarmLand {
     private final HashMap<Point, Plant> crops;
     private final int rows;
     private final int columns;
+    private int wiltedCrops;
 
     /**
      * Construct an untill and an empty FarmLand object.
@@ -289,6 +290,7 @@ public class FarmLand {
                         && soils.get(point).getDaysNotWatered() > DEFAULT_DAYS_TO_WILT
                         && !crop.getIsWilted()) {
                     crop.wilt();
+                    wiltedCrops++;
                 }
             }
         }
@@ -309,6 +311,34 @@ public class FarmLand {
                 setWiltedTurnipSoilImage(point);
             }
         }
+    }
+
+    /**
+     * Returns the number of crops that are currently wilted.
+     *
+     * @return wiltedCrops as an int
+     */
+    public int getWiltedCrops() {
+        return wiltedCrops;
+    }
+
+    /**
+     * Checks if most of the crops are ripening.
+     *
+     * @return true if all crops are ripe, else false.
+     */
+    public boolean allRipening() {
+        int totalWilt = 0;
+        for (Plant crop: crops.values()) {
+            if (crop.getIsWilted() && totalWilt <= wiltedCrops) {
+                totalWilt++;
+                continue;
+            }
+            if (!crop.isRipening() || totalWilt > wiltedCrops) {
+                return false;
+            }
+        }
+        return true;
     }
     /**
      * Shows a description about the FarmLand.

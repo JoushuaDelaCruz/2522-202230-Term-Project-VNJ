@@ -52,6 +52,18 @@ public class Driver extends Application {
      */
     public static final int SCREEN_HEIGHT = TILE_SIZE * MAX_ROWS;
     /**
+     * Default x-layout of the start btn.
+     */
+    public static final int DEFAULT_BTN_XCOORDINATE = 300;
+    /**
+     * Default y-layout of the start btn.
+     */
+    public static final int DEFAULT_BTN_YCOORDINATE = 360;
+    /**
+     * Default numbers of wilted crops for the game player to lose.
+     */
+    public static final int DEFAULT_GAME_OVER = 3;
+    /**
      * Default starting point of the user.
      */
     public static final Point STARTING_POINT = new Point(360, 360);
@@ -67,7 +79,7 @@ public class Driver extends Application {
     @Override
     public void start(final Stage stage) {
         stage.setTitle("Back To Nature");
-        Image backgrounds = new Image("friends.jpg");
+        Image backgrounds = new Image("friends.jpg", SCREEN_WIDTH, SCREEN_HEIGHT, true, true);
         Image startButton = new Image("button.png");
         ImageView button = new ImageView(startButton);
         ImageView background = new ImageView(backgrounds);
@@ -89,8 +101,8 @@ public class Driver extends Application {
         btn.setGraphic(button);
         btn.setFocusTraversable(false);
         btn.setBackground(null);
-        btn.setLayoutX(360);
-        btn.setLayoutY(360);
+        btn.setLayoutX(DEFAULT_BTN_XCOORDINATE);
+        btn.setLayoutY(DEFAULT_BTN_YCOORDINATE);
         btn.setOnAction(e -> stage.setScene(scene));
         start.getChildren().add(btn);
         stage.setScene(startUp);
@@ -99,7 +111,6 @@ public class Driver extends Application {
         timer.start();
         farmLand.drawCrops();
     }
-
     /**
      * Processes the keys pressed by the user.
      *
@@ -179,6 +190,7 @@ public class Driver extends Application {
             }
             if (days >= DEFAULT_DAYS_TO_GROW) {
                 grow();
+                checkGameState();
                 days = 0;
             }
             if (gameOver) {
@@ -208,6 +220,20 @@ public class Driver extends Application {
         farmLand.growPlants();
         farmLand.drawPlants();
         farmLand.drySoils();
+    }
+
+    /**
+     * Checks if the game is over or if the player won!
+     */
+    public void checkGameState() {
+        if (farmLand.getWiltedCrops() > DEFAULT_GAME_OVER) {
+            gameOver = true;
+            System.out.println("You lose");
+        }
+        if (farmLand.allRipening()) {
+            gameOver = true;
+            System.out.println("You won!");
+        }
     }
     /**
      * Launches the JavaFX application.  We still need a main method in our
